@@ -5,8 +5,6 @@ import style from "../../styles/E.module.css";
 import Head from "next/head";
 import { useState } from "react";
 
-
-
 export default function E(props) {
   try {
     const getValueDescription = (data, type, pos) => {
@@ -217,7 +215,7 @@ function parseData(results) {
 export async function getServerSideProps(context) {
   const id = context.params.id;
   const { Client } = require("@notionhq/client");
-  const { MongoClient } = require('mongodb');
+  const { MongoClient } = require("mongodb");
 
   const client = new MongoClient(poccess.env.MONGODB_URI);
   await client.connect();

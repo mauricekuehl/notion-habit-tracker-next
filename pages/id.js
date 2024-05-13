@@ -1,6 +1,7 @@
 import styles from "../styles/Home.module.css";
 import stylesId from "../styles/Id.module.css";
 import Head from "next/head";
+import Image from "next/image";
 import { useRouter } from "next/router";
 
 export default function Id(props) {
@@ -23,11 +24,11 @@ export default function Id(props) {
           <p className={stylesId.res}>
             https://notion.mauricekuehl.com/e/{query.id}
           </p>
-          <img
+          <Image
             className={stylesId.image}
             src="/embed-demo.png"
             alt="demo of embed"
-          ></img>
+          ></Image>
         </main>
         <footer className={styles.footer}>
           <hr />

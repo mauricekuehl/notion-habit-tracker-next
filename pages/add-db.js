@@ -2,6 +2,7 @@ import styles from "../styles/Home.module.css";
 import stylesAdd from "../styles/Add.module.css";
 import Head from "next/head";
 import Router from "next/router";
+import Image from "next/image";
 import { useRouter } from "next/router";
 
 export default function Add() {
@@ -25,7 +26,7 @@ export default function Add() {
             <li>
               2. Click on share and add the integration &quot;Habit Tracker with
               Charts integration&quot;.
-              <img
+              <Image
                 className={stylesAdd.image}
                 src="/share-demo.png"
                 alt="screenshot of description"

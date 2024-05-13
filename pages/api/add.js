@@ -1,5 +1,5 @@
 const { Client } = require("@notionhq/client");
-const { MongoClient } = require('mongodb');
+const { MongoClient } = require("mongodb");
 
 export default async function redirect(req, res) {
   try {
@@ -7,7 +7,7 @@ export default async function redirect(req, res) {
     const notion = new Client({ auth: token });
     const responseSearch = await notion.search({
       query: "Habit Tracker Database",
-      filter: { value: "database", "property": "object" }
+      filter: { value: "database", property: "object" },
     });
 
     const client = new MongoClient(process.env.MONGODB_URI);
@@ -27,8 +27,7 @@ export default async function redirect(req, res) {
     } else {
       res.json({ success: true, id: id });
     }
-  }
-  catch (error) {
+  } catch (error) {
     res.status(500).send();
   }
 }
