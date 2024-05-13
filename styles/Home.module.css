@@ -1,0 +1,60 @@
+.h1 {
+  font-size: 3.75rem;
+  font-weight: 900;
+  margin-top: 22vh;
+}
+.aPrime {
+  display: inline-block;
+  color: #ffffff;
+  background: #e16259;
+  border: 1px solid #be5643;
+  padding: 0.5rem 1.5rem;
+  font-size: 1.25rem;
+  border-radius: 0.75rem;
+  font-weight: 500;
+  margin-right: 1rem;
+  margin-bottom: 1rem;
+  line-height: 1.75rem;
+  text-align: center;
+  padding-top: 0.675rem;
+}
+.aSec {
+  display: inline-block;
+  color: #200e0b;
+  background: #ffffff;
+  border: 2px solid #be5643;
+  padding: 0.5rem 1.5rem;
+  font-size: 1.25rem;
+  border-radius: 0.75rem;
+  font-weight: 500;
+  line-height: 1.75rem;
+  text-align: center;
+  padding-top: 0.675rem;
+}
+.container {
+  width: clamp(10rem, 50rem, 90%);
+  height: 100vh;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.main {
+  width: 100%;
+  height: 100%;
+}
+.footer {
+  width: 100%;
+  background: white;
+}
+.footer > * {
+  color: rgba(150, 150, 150, 0.75);
+}
+.footer a {
+  color: rgba(100, 100, 255, 0.7);
+}
+@media (max-width: 550px) {
+  .h1 {
+    margin-top: 5vh;
+  }
+}

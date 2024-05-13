@@ -1,0 +1,118 @@
+.calender {
+  width: 100%;
+  height: 80%;
+  box-sizing: border-box;
+  margin: 1.5rem auto 0 auto;
+  border-bottom: 1px solid rgb(230, 230, 230);
+}
+.canvas {
+  margin: 0.75rem 0 1.75rem 0;
+}
+.main {
+  width: 100%;
+  height: 100%;
+  min-height: 100vh;
+}
+.footer {
+  width: 100%;
+  height: 100%;
+  margin-top: 18vh;
+}
+.footer > * {
+  color: rgba(150, 150, 150, 0.5);
+}
+.footer a {
+  color: rgba(100, 100, 255, 0.7);
+}
+.container {
+  width: 99%;
+  height: 100%;
+  margin: 0.5rem auto;
+  height: 100%;
+  min-height: 120vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.tooltip {
+  position: absolute;
+  text-align: center;
+  padding: 0.5rem 1rem;
+  background: #313639;
+  color: #f9f9f9;
+  border: 0px;
+  border-radius: 8px;
+  pointer-events: none;
+  font-size: 12px;
+}
+.select {
+  background-color: transparent;
+  border: 0;
+  font-size: 14px;
+  line-height: 1.2;
+  font-weight: 600;
+  color: rgb(55, 53, 47);
+  padding: 0.25rem;
+  border-radius: 0.25rem;
+  margin-right: 0.5rem;
+  cursor: pointer;
+}
+.select:hover {
+  background-color: rgba(225, 225, 225, 0.5);
+}
+.button {
+  background-color: transparent;
+  border: 0;
+  font-size: 14px;
+  line-height: 1;
+  font-weight: 400;
+  padding: 0.5rem 0.75rem;
+  margin: 0 0.5rem;
+  border-radius: 0.25rem;
+  color: #2eaadc;
+  cursor: pointer;
+}
+.button:hover {
+  background-color: rgb(46, 170, 220, 0.08);
+}
+.performens {
+  height: 100%;
+  padding: 0.25rem 0.5rem;
+  margin: 0.25rem 1rem 0 1rem;
+  font-size: 14px;
+  line-height: 1.2;
+  font-weight: 500;
+  color: rgba(55, 53, 47, 0.65);
+}
+.nav {
+  display: flex;
+  justify-content: left;
+  align-items: center;
+}
+.h2 {
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 1.5;
+  color: rgb(55, 53, 47);
+  margin-top: 1rem;
+  margin-bottom: 0;
+  margin-left: 0.5rem;
+}
+.details {
+  margin: 0.5rem 0.25rem;
+}
+.summary {
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 1.5;
+  color: rgb(55, 53, 47);
+  padding: 0.125rem 0.75rem;
+  /* background-color: rgb(230, 230, 230); */
+  /* border-bottom: 1px solid rgba(0, 0, 0, 0.3); */
+}
+/* .summary::webkit-details-marker {
+  background: url("/arrow.svg") center no-repeat;
+  color: transparent;
+  width: 14px;
+} */
