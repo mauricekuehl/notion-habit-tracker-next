@@ -1,4 +1,4 @@
-import styles from "../styles/Home.module.css";
+import styles from "../styles/Index.module.css";
 import Head from "next/head";
 import Link from "next/link";
 
@@ -19,7 +19,7 @@ export default function Home() {
             Get detailt information on habit tracking in Notion
           </h1>
           <a
-            href="https://www.notion.so/mauz/Habit-Tracker-with-Charts-1d5a906373844f0da0d422733d698886"
+            href="https://mauz.notion.site/Habit-Tracker-with-Charts-ff94d752086844a8a43e1f1abae21f14"
             target="_blank"
             rel="noreferrer"
             className={styles.aPrime}
@@ -27,7 +27,7 @@ export default function Home() {
             Get the free template
           </a>
           <a
-            href="https://mauz.notion.site/Habit-Tracker-with-Charts-Demo-bb57e11d1d6e48629eb1f92b0f8f9508"
+            href="https://mauz.notion.site/Habit-Tracker-with-Charts-ff94d752086844a8a43e1f1abae21f14"
             target="_blank"
             rel="noreferrer"
             className={styles.aSec}

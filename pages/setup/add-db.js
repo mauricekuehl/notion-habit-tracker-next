@@ -1,14 +1,31 @@
 import styles from "../styles/Home.module.css";
-import stylesAdd from "../styles/Add.module.css";
+import stylesAddDB from "../styles/AddDB.module.css";
 import Head from "next/head";
 import Router from "next/router";
 import Image from "next/image";
+import shareDemo from "../public/share-demo.png";
 import { useRouter } from "next/router";
+
+async function addDB(access_token) {
+  let res = await fetch(`/api/add-notion-db/?access_token=${access_token}`);
+  res = await res.json();
+
+  if (res.foundDatabase) {
+    Router.push({
+      pathname: "/setup/present-embed-link",
+      query: { database_id: res.database_id },
+    });
+  } else {
+    alert(
+      "A table with the name 'Habit Tracker Database' where the integration was added could not be found. :( \nMake sure this is the case and try again."
+    );
+  }
+}
 
 export default function Add() {
   const { query } = useRouter();
   try {
-    const token = query.token;
+    const access_token = query.access_token;
     return (
       <div className={styles.container}>
         <Head>
@@ -20,18 +37,18 @@ export default function Add() {
           <link rel="icon" href="/favicon.ico" />
         </Head>
         <main className={styles.main}>
-          <h1 className={stylesAdd.h1}>Register your Database</h1>
-          <ul className={stylesAdd.ul}>
+          <h1 className={stylesAddDB.h1}>Register your Database</h1>
+          <ul className={stylesAddDB.ul}>
             <li>1. Go to your template that you have just cloned.</li>
             <li>
               2. Click on share and add the integration &quot;Habit Tracker with
               Charts integration&quot;.
               <Image
-                className={stylesAdd.image}
-                src="/share-demo.png"
+                className={stylesAddDB.image}
+                src={shareDemo}
                 alt="screenshot of description"
               />
-              <figcaption className={stylesAdd.figcaption}>
+              <figcaption className={stylesAddDB.figcaption}>
                 it should look like this
               </figcaption>
             </li>
@@ -42,10 +59,8 @@ export default function Add() {
             <li>
               4.
               <button
-                className={stylesAdd.button}
-                onClick={() => {
-                  getStatus(token);
-                }}
+                className={stylesAddDB.button}
+                onClick={addDB(access_token)}
               >
                 Continue to the last step
               </button>
@@ -54,22 +69,10 @@ export default function Add() {
         </main>
         <footer className={styles.footer}>
           <hr />
-          <p></p>
         </footer>
       </div>
     );
   } catch (error) {
     alert("something went wrong :(");
-  }
-}
-async function getStatus(token) {
-  let res = await fetch(`/api/add/?token=${token}`);
-  res = await res.json();
-  if (res.success) {
-    Router.push({ pathname: "/id", query: { id: res.id } });
-  } else {
-    alert(
-      "A table with the name 'Habit Tracker Database' where the integration was added could not be found. :( \nMake sure this is the case and try again."
-    );
   }
 }

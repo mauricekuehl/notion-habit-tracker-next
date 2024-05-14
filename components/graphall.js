@@ -8,78 +8,20 @@ import {
   Title,
   Tooltip,
   Legend,
-  BarElement,
 } from "chart.js";
-import { Line, Bar } from "react-chartjs-2";
+import { Line } from "react-chartjs-2";
+import {
+  filterDataByDate,
+  parseData,
+  parseWeekData,
+} from "../utils/dateUtils.js";
+
 export default function GraphAll(props) {
-  const dayInMs = 1000 * 60 * 60 * 24;
   const days = { year: 365, month: 30, week: 7 }[props.timeRange];
-  const filterData = (data, dateNow) => {
-    return data.filter((elm) => {
-      return (
-        elm.date.getTime() > dateNow.getTime() - dayInMs * days &&
-        elm.date.getTime() < dateNow
-      );
-    });
-  };
-  const addLastElm = (data, dateNow) => {
-    if (data.at(-1).date.toLocaleDateString() !== dateNow.toLocaleDateString())
-      data.push({
-        date: new Date(dateNow.toISOString().slice(0, 10)),
-        value: 0,
-      });
-    return data;
-  };
-  const getDiffernce = (firstDate, secondDate) => {
-    return (firstDate.getTime() - secondDate.getTime()) / dayInMs;
-  };
-  const parseData = (data, dateNow) => {
-    if (data.length === 0) {
-      return Array(days)
-        .fill(null)
-        .map((elm, index) => {
-          return {
-            date: new Date(dateNow.getTime() - dayInMs * index),
-            value: 0,
-          };
-        });
-    } else {
-      return addLastElm(data, dateNow).reduce((newArray, elm, index) => {
-        if (index !== 0) {
-          const lastElm = newArray.at(-1);
-          const difference = getDiffernce(elm.date, lastElm.date);
-          for (let i = 1; i < difference; i++) {
-            newArray.push({
-              date: new Date(lastElm.date.getTime() + dayInMs * i),
-              value: 0,
-            });
-          }
-        }
-        newArray.push(elm);
-        return newArray;
-      }, []);
-    }
-  };
-  const parseWeekData = (data) => {
-    const weekParsedDate = [];
-    for (let i = 0; i < data.length; i++) {
-      if (data[i].date.getDay() === 0) {
-        let sum = 0;
-        let y = 0;
-        for (; y < 7 && y + i < data.length; y++) {
-          sum += data[i + y].value;
-        }
-        weekParsedDate.push({
-          date: data[i].date,
-          value: sum / (y + 1),
-        });
-        i += 6;
-      }
-    }
-    return weekParsedDate;
-  };
+
   const getDataset = (data, dateNow, color) => {
-    const parsedData = parseData(filterData(data.body, dateNow), dateNow);
+    const filteredData = filterDataByDate(data.body, dateNow, days);
+    const parsedData = parseData(filteredData, dateNow);
     const resData =
       props.timeRange === "year" ? parseWeekData(parsedData) : parsedData;
     return {
@@ -90,41 +32,42 @@ export default function GraphAll(props) {
       borderWidth: 1,
     };
   };
-  const getDatasets = (data, dateNow) => {
-    const res = [];
-    if (data.description.length < 7) {
-      var colorPool = [130, 300, 240, 350, 30, 55]
-        .slice(0, data.description.length)
-        .sort((a, b) => {
-          return a - b;
-        });
+
+  const getSetOfColors = (num) => {
+    if (num <= 6) {
+      return [130, 300, 240, 350, 30, 55].slice(0, num).sort((a, b) => {
+        return a - b;
+      });
     }
-    for (let i = 0; i < data.description.length; i++) {
-      const color =
-        data.description.length > 6
-          ? 260 + (310 / data.description.length) * i
-          : colorPool[i];
-      res.push(
-        getDataset(
-          {
-            description: [data.description[i]],
-            body: data.body.map((elm) => {
-              return {
-                date: new Date(elm.date),
-                value: elm.value[i] * 100,
-              };
-            }),
-          },
-          dateNow,
-          color
-        )
-      );
-    }
-    return res;
+    return Array(num)
+      .fill(null)
+      .map((_, i) => {
+        return 260 + (310 / num) * i;
+      });
   };
+
+  const getDatasets = (data, dateNow) => {
+    const colorSet = getSetOfColors(data.description.length);
+    return data.description.map((description, i) =>
+      getDataset(
+        {
+          description: [description],
+          body: data.body.map((elm) => {
+            return {
+              date: new Date(elm.date),
+              value: elm.value[i] * 100,
+            };
+          }),
+        },
+        dateNow,
+        colorSet[i]
+      )
+    );
+  };
+
   const getParsedAverageData = (data, dateNow) => {
     return parseData(
-      filterData(
+      filterDataByDate(
         data.body.map((elm) => {
           return {
             date: elm.date,
@@ -133,15 +76,17 @@ export default function GraphAll(props) {
             ),
           };
         }),
-        dateNow
+        dateNow,
+        days
       ),
       dateNow
     );
   };
+
   const getData = (data, dateNow) => {
-    const parsedData = getParsedAverageData(props.data, dateNow);
+    const parsedAvgData = getParsedAverageData(props.data, dateNow);
     const finalData =
-      props.timeRange === "year" ? parseWeekData(parsedData) : parsedData;
+      props.timeRange === "year" ? parseWeekData(parsedAvgData) : parsedAvgData;
     return {
       labels: finalData.map((elm) => {
         return elm.date.toLocaleDateString("en-us", {
@@ -162,6 +107,7 @@ export default function GraphAll(props) {
       ],
     };
   };
+
   const options = {
     responsive: true,
   };

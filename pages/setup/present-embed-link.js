@@ -1,10 +1,11 @@
 import styles from "../styles/Home.module.css";
-import stylesId from "../styles/Id.module.css";
+import stylesId from "../styles/PresentEmbedLink.module.css";
 import Head from "next/head";
 import Image from "next/image";
+import embedDemo from "../public/embed-demo.png";
 import { useRouter } from "next/router";
 
-export default function Id(props) {
+export default function Id() {
   const { query } = useRouter();
   try {
     return (
@@ -22,11 +23,11 @@ export default function Id(props) {
             Finally add an embed with the URL at the bottom of the template:
           </h1>
           <p className={stylesId.res}>
-            https://notion.mauricekuehl.com/e/{query.id}
+            https://notion.mauricekuehl.com/e/{query.database_id}
           </p>
           <Image
             className={stylesId.image}
-            src="/embed-demo.png"
+            src={embedDemo}
             alt="demo of embed"
           ></Image>
         </main>

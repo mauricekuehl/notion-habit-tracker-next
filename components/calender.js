@@ -49,16 +49,6 @@ function getCalendar(
   // Construct formats.
   formatMonth = d3.utcFormat(formatMonth);
 
-  // Compute titles.
-  /* if (title === undefined) {
-    const formatDate = d3.utcFormat("%B %-d, %Y");
-    const formatValue = color.tickFormat(100, yFormat);
-    title = (i) => `${formatDate(X[i])}\n${formatValue(Y[i])}`;
-  } else if (title !== null) {
-    const T = d3.map(data, title);
-    title = (i) => T[i];
-  } */
-
   // Group the index by year, in reverse input order. (Assuming that the input is
   // chronological, this will show years in reverse chronological order.)
   if (yearCalendar === "default") {
@@ -80,8 +70,6 @@ function getCalendar(
 
   const svg = d3
     .create("svg")
-    /* .attr("width", width)
-    .attr("height", height * years.length) */
     .attr("viewBox", [0, 0, width, height * years.length])
     .attr("style", "max-width: 100%; height: auto; height: intrinsic;")
     .attr("font-size", 14);
@@ -142,8 +130,6 @@ function getCalendar(
     .attr("fill", (i) => color(Y[i]))
     .attr("ry", 2);
 
-  //if (title) cell.append("title").text(title);
-
   const month = year
     .append("g")
     .selectAll("g")
@@ -176,8 +162,6 @@ function getCalendar(
 
   cell
     .on("mouseover", function (d, i) {
-      // d3.select(this).transition().duration("100").attr("r", 7); //Makes div appear
-
       d3.select("#tooltip").transition().duration(100).style("opacity", 1);
       const targetBoudries = d.target.getBoundingClientRect();
 
@@ -206,17 +190,7 @@ function getCalendar(
 }
 
 export default function Calender(props) {
-  const [year, setYear] = useState("default");
-  //   const [graph, setGraph] = useState("");
-  /* useEffect(() => {
-    setGraph(
-      getCalendar(
-        props.data.body,
-        { x: (d) => d.date, y: (d) => d.value },
-        year
-      )
-    );
-  }, [props.data, year]); */
+  const [year] = useState("default");
   const svg = useRef(null);
   useEffect(() => {
     svg.current.innerHTML = "";
@@ -232,30 +206,6 @@ export default function Calender(props) {
   }, [year, props.data.body]);
   return (
     <div className={style.calender} id="calender">
-      {/* <label htmlFor="year">year</label>
-      <select
-        name="year"
-        id="year"
-        onChange={(e) => {
-          setYear(e.target.value);
-        }}
-      >
-        {props.data.body
-          .reduce(
-            (newArray, e) => {
-              if (newArray[newArray.length - 1] !== e.date.getUTCFullYear()) {
-                newArray.push(e.date.getUTCFullYear());
-              }
-              return newArray;
-            },
-            ["default"]
-          )
-          .map((e, index) => (
-            <option key={index} value={e}>
-              {e === "default" ? "last year" : e}
-            </option>
-          ))}
-      </select> */}
       <div ref={svg} />
     </div>
   );

@@ -122,6 +122,7 @@ export default function E(props) {
             <button
               className={style.button}
               onClick={() => {
+                // TODO Should rerun getServerSideProps or better useEffect/fetch
                 location.reload(true);
               }}
             >
@@ -213,29 +214,29 @@ function parseData(results) {
 }
 
 export async function getServerSideProps(context) {
-  const id = context.params.id;
+  const database_id = context.params.id;
   const { Client } = require("@notionhq/client");
   const { MongoClient } = require("mongodb");
 
-  const client = new MongoClient(poccess.env.MONGODB_URI);
+  const client = new MongoClient(process.env.MONGODB_URI);
   await client.connect();
-  const collection = client.db("main").collection("users");
+  const collection = client.db("main").collection("sites");
 
-  const data = await collection.findOne({ id: id });
+  const data = await collection.findOne({ database_id: database_id });
   await client.close();
-  if (data === undefined) {
+  if (data === null) {
     return {
       notFound: true,
     };
   }
-  const token = data.token;
+  const access_token = data.access_token;
   const response = [];
   let cursor = undefined;
   try {
     while (true) {
-      const notion = new Client({ auth: token });
+      const notion = new Client({ auth: access_token });
       const { results, next_cursor } = await notion.databases.query({
-        database_id: id,
+        database_id: database_id,
         start_cursor: cursor,
       });
       response.push(...results);
