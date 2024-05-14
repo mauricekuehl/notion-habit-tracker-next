@@ -5,182 +5,168 @@ import style from "../../styles/E.module.css";
 import Head from "next/head";
 import { useState } from "react";
 
-export default function E(props) {
-  try {
-    const getValueDescription = (data, type, pos) => {
-      if (type === "solo") {
-        return {
-          description: [data.description[pos]],
-          value: (value, pos) => {
-            return value[pos] * 100;
-          },
-        };
-      } else if (type === "average") {
-        return {
-          description: [{ name: "Average" }],
-          value: (value) => {
-            return Math.floor(
-              (value.reduce((a, b) => a + b) / value.length) * 100
-            );
-          },
-        };
-      } else if (type === "all") {
-        return {
-          description: data.description,
-          value: (value) => {
-            return value;
-          },
-        };
-      }
-    };
-    const getData = (data, type, pos) => {
-      const valueDesciption = getValueDescription(data, type, pos);
-      return (data = {
-        description: valueDesciption.description,
-        body: props.data.body.map((elm) => {
-          return {
-            date: new Date(elm.date),
-            value: valueDesciption.value(elm.value, pos),
-          };
-        }),
-      });
-    };
-    const [range, setRange] = useState("week"); //month //year
-    const getPerformens = () => {
-      const getAvg = (d) => {
-        return (
-          d
-            .map((elm) => elm.value)
-            .reduce((prev, cur) => {
-              return prev + cur;
-            }, 0) / 7
-        );
-      };
-      const data = getData(props.data, "average").body;
-      const sevenDaysInMs = 1000 * 60 * 60 * 24 * 7;
-      const dateNow = new Date().getTime();
-      const lastTwoWeeks = data.filter((elm) => {
-        return (
-          elm.date.getTime() > dateNow - sevenDaysInMs * 2 &&
-          elm.date.getTime() < dateNow
-        );
-      });
-      const thisWeek = getAvg(
-        lastTwoWeeks.filter((elm) => {
-          return elm.date.getTime() > dateNow - sevenDaysInMs;
-        })
-      );
-      const lastWeek = getAvg(
-        lastTwoWeeks.filter((elm) => {
-          return !(elm.date.getTime() > dateNow - sevenDaysInMs);
-        })
-      );
-      return Math.round((1 - thisWeek / lastWeek) * -100);
-    };
-    const performens = getPerformens();
-    return (
-      <div className={style.container}>
-        <Head>
-          <title>Habit tracker</title>
-          <meta
-            name="description"
-            content="notion habits tracker with diagrams"
-          />
-          <link rel="icon" href="/favicon.ico" />
-        </Head>
-        <div
-          id="tooltip"
-          className={style.tooltip}
-          style={{ opacity: 0 }}
-        ></div>
-        <main className={style.main}>
-          <nav className={style.nav}>
-            <select
-              className={style.select}
-              name="range"
-              onChange={(e) => {
-                setRange(e.target.value);
-              }}
-            >
-              <option value="week">Weekly</option>
-              <option value="month">Monthly</option>
-              <option value="year">Yearly</option>
-            </select>
-            <div className={style.performens}>
-              Week:
-              <span
-                style={{
-                  color:
-                    performens == 0 ? "" : performens > 0 ? "green" : "red",
-                }}
-              >
-                {" "}
-                {performens}%
-              </span>
-            </div>
-
-            <button
-              className={style.button}
-              onClick={() => {
-                // TODO Should rerun getServerSideProps or better useEffect/fetch
-                location.reload(true);
-              }}
-            >
-              Reload
-            </button>
-          </nav>
-          <hr style={{ opacity: 0.25, marginTop: "0.25rem" }} />
-          <h2 className={style.h2}>Overall average</h2>
-          <hr style={{ opacity: 0.25, marginTop: "0.125rem" }} />
-          <Calender data={getData(props.data, "average")} />
-          <Graph
-            className={style.canvas}
-            timeRange={range}
-            data={getData(props.data, "average")}
-          />
-          <GraphAll
-            className={style.canvas}
-            timeRange={range}
-            data={getData(props.data, "all")}
-          />{" "}
-          <div>
-            {props.data.description.map((elm, index) => {
-              const data = getData(props.data, "solo", index);
-              return (
-                <details key={index} className={style.details}>
-                  <summary className={style.summary}>{elm.name}</summary>
-                  <hr style={{ opacity: 0.25, marginTop: "0" }} />
-                  <Calender className={style.canvas} data={data} />
-                  <Graph
-                    className={style.canvas}
-                    timeRange={range}
-                    data={data}
-                  />
-                </details>
-              );
-            })}
-          </div>
-        </main>
-        <footer className={style.footer}>
-          <hr />
-          <p>
-            If you have any suggestions send them to:
-            noiton-habit-tracker@protonmail.com
-          </p>
-        </footer>
-      </div>
-    );
-  } catch (error) {
-    alert("something went wrong :(");
-  }
-}
-
 /*
-Mainly parsing notion data
+Mainly parsing notion data, besides retrieving data
 => Unit tests would be ideal here, also to provide a simple overview of input and output
 */
+const getData = (data, type, pos) => {
+  const valueDesciption = getValueDescription(data, type, pos);
+  return {
+    description: valueDesciption.description,
+    body: data.body.map((elm) => {
+      return {
+        date: new Date(elm.date),
+        value: valueDesciption.value(elm.value, pos),
+      };
+    }),
+  };
+};
 
-function parseData(results) {
+const getValueDescription = (data, type, pos) => {
+  if (type === "solo") {
+    return {
+      description: [data.description[pos]],
+      value: (value, pos) => {
+        return value[pos] * 100;
+      },
+    };
+  } else if (type === "average") {
+    return {
+      description: [{ name: "Average" }],
+      value: (value) => {
+        return Math.floor((value.reduce((a, b) => a + b) / value.length) * 100);
+      },
+    };
+  } else if (type === "all") {
+    return {
+      description: data.description,
+      value: (value) => {
+        return value;
+      },
+    };
+  }
+};
+
+const calcCurrPerformance = (data) => {
+  const getAvg = (d) => {
+    return (
+      d
+        .map((elm) => elm.value)
+        .reduce((prev, cur) => {
+          return prev + cur;
+        }, 0) / 7
+    );
+  };
+  const sevenDaysInMs = 1000 * 60 * 60 * 24 * 7;
+  const dateNow = new Date().getTime();
+  const lastTwoWeeks = data.filter((elm) => {
+    return (
+      elm.date.getTime() > dateNow - sevenDaysInMs * 2 &&
+      elm.date.getTime() < dateNow
+    );
+  });
+  const thisWeek = getAvg(
+    lastTwoWeeks.filter((elm) => {
+      return elm.date.getTime() > dateNow - sevenDaysInMs;
+    })
+  );
+  const lastWeek = getAvg(
+    lastTwoWeeks.filter((elm) => {
+      return !(elm.date.getTime() > dateNow - sevenDaysInMs);
+    })
+  );
+  return Math.round((1 - thisWeek / lastWeek) * -100);
+};
+
+export default function E(props) {
+  const [range, setRange] = useState("week");
+  const performens = calcCurrPerformance(getData(props.data, "average").body);
+
+  return (
+    <div className={style.container}>
+      <Head>
+        <title>Habit tracker</title>
+        <meta
+          name="description"
+          content="notion habits tracker with diagrams"
+        />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+      <div id="tooltip" className={style.tooltip} style={{ opacity: 0 }}></div>
+      <main className={style.main}>
+        <nav className={style.nav}>
+          <select
+            className={style.select}
+            name="range"
+            onChange={(e) => {
+              setRange(e.target.value);
+            }}
+          >
+            <option value="week">Weekly</option>
+            <option value="month">Monthly</option>
+            <option value="year">Yearly</option>
+          </select>
+          <div className={style.performens}>
+            Week:
+            <span
+              style={{
+                color: performens == 0 ? "" : performens > 0 ? "green" : "red",
+              }}
+            >
+              {" "}
+              {performens}%
+            </span>
+          </div>
+          <button
+            className={style.button}
+            onClick={() => {
+              // TODO Should rerun getServerSideProps or better useEffect/fetch
+              location.reload(true);
+            }}
+          >
+            Reload
+          </button>
+        </nav>
+        <hr style={{ opacity: 0.25, marginTop: "0.25rem" }} />
+        <h2 className={style.h2}>Overall average</h2>
+        <hr style={{ opacity: 0.25, marginTop: "0.125rem" }} />
+        <Calender data={getData(props.data, "average")} />
+        <Graph
+          className={style.canvas}
+          timeRange={range}
+          data={getData(props.data, "average")}
+        />
+        <GraphAll
+          className={style.canvas}
+          timeRange={range}
+          data={getData(props.data, "all")}
+        />{" "}
+        <div>
+          {props.data.description.map((elm, index) => {
+            const data = getData(props.data, "solo", index);
+            return (
+              <details key={index} className={style.details}>
+                <summary className={style.summary}>{elm.name}</summary>
+                <hr style={{ opacity: 0.25, marginTop: "0" }} />
+                <Calender className={style.canvas} data={data} />
+                <Graph className={style.canvas} timeRange={range} data={data} />
+              </details>
+            );
+          })}
+        </div>
+      </main>
+      <footer className={style.footer}>
+        <hr />
+        <p>
+          If you have any suggestions send them to:
+          noiton-habit-tracker@protonmail.com
+        </p>
+      </footer>
+    </div>
+  );
+}
+
+const parseData = (results) => {
   return {
     description: Object.keys(results[0].properties)
       .map((key) => {
@@ -216,7 +202,7 @@ function parseData(results) {
         return !pos || item.date != ary[pos - 1].date;
       }),
   };
-}
+};
 
 export async function getServerSideProps(context) {
   const database_id = context.params.id;
