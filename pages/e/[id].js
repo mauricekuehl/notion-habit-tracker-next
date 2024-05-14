@@ -175,6 +175,11 @@ export default function E(props) {
   }
 }
 
+/*
+Mainly parsing notion data
+=> Unit tests would be ideal here, also to provide a simple overview of input and output
+*/
+
 function parseData(results) {
   return {
     description: Object.keys(results[0].properties)
@@ -222,14 +227,15 @@ export async function getServerSideProps(context) {
   await client.connect();
   const collection = client.db("main").collection("sites");
 
-  const data = await collection.findOne({ database_id: database_id });
+  const databaseResult = await collection.findOne({ database_id: database_id });
   await client.close();
-  if (data === null) {
+
+  if (databaseResult === null) {
     return {
       notFound: true,
     };
   }
-  const access_token = data.access_token;
+  const access_token = databaseResult.access_token;
   const response = [];
   let cursor = undefined;
   try {

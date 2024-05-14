@@ -20,6 +20,11 @@ export default async function redirect(req, res) {
         "Content-Type": "application/json",
       },
     });
+
+    /*
+    Passing on the access token in the URL is suboptimal, 
+    but should not be a problem in this case.   
+    */
     res.redirect(
       301,
       `https://notion.mauricekuehl.com/setup/add-db?access_token=${responseAuth.data.access_token}`

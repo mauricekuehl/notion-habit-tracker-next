@@ -68,4 +68,4 @@ const parseWeekData = (data) => {
   return weekParsedDate;
 };
 
-export { filterDataByDate as filterData, parseData, parseWeekData };
+export { filterDataByDate, parseData, parseWeekData };

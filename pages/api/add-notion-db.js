@@ -1,11 +1,15 @@
 const { Client } = require("@notionhq/client");
 const { MongoClient } = require("mongodb");
 
-export default async function redirect(req, res) {
+/*
+Could now be replaced by Server Actions. 
+*/
+export default async function addNotionDB(req, res) {
   try {
     const access_token = req.query.access_token;
     const notion = new Client({ auth: access_token });
-    // TODO use next pointer in case of more than 20 results
+
+    // TODO use next pointer
     const responseSearch = await notion.search({
       query: "Habit Tracker Database",
       filter: { value: "database", property: "object" },
@@ -23,7 +27,9 @@ export default async function redirect(req, res) {
     await client.connect();
     const site_collection = client.db("main").collection("sites");
 
-    // TODO suboptimal Solution
+    /*
+    Suboptimal solution, the data should ideally be structured differently.
+    */
     for (const notionDB of notionDBs) {
       await site_collection.deleteMany({
         database_id: notionDB.id,

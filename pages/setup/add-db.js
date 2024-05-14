@@ -1,13 +1,18 @@
-import styles from "../styles/Home.module.css";
-import stylesAddDB from "../styles/AddDB.module.css";
+import styles from "../../styles/Home.module.css";
+import stylesAddDB from "../../styles/AddDB.module.css";
 import Head from "next/head";
 import Router from "next/router";
 import Image from "next/image";
-import shareDemo from "../public/share-demo.png";
+import shareDemo from "../../public/share-demo.png";
 import { useRouter } from "next/router";
 
 async function addDB(access_token) {
-  let res = await fetch(`/api/add-notion-db/?access_token=${access_token}`);
+  /*
+  Fetch call could now be replaced by Server Actions. 
+  */
+  let res = await fetch(
+    `https://notion.mauricekuehl.com/api/add-notion-db?access_token=${access_token}`
+  );
   res = await res.json();
 
   if (res.foundDatabase) {
@@ -24,8 +29,12 @@ async function addDB(access_token) {
 
 export default function Add() {
   const { query } = useRouter();
+  const access_token = query.access_token;
   try {
-    const access_token = query.access_token;
+    /*
+    Passing on the access token in the URL is suboptimal, 
+    but should not be a problem in this case.   
+    */
     return (
       <div className={styles.container}>
         <Head>
@@ -60,7 +69,9 @@ export default function Add() {
               4.
               <button
                 className={stylesAddDB.button}
-                onClick={addDB(access_token)}
+                onClick={() => {
+                  addDB(access_token);
+                }}
               >
                 Continue to the last step
               </button>

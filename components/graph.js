@@ -17,6 +17,11 @@ import {
   parseWeekData,
 } from "../utils/dateUtils.js";
 
+/*
+Mainly parsing notion data format to chart.js format
+=> Unit tests would be ideal here, also to provide a simple overview of input and output
+*/
+
 export default function Graph(props) {
   const days = { year: 365, month: 30, week: 7 }[props.timeRange];
   const dateNow = new Date();
